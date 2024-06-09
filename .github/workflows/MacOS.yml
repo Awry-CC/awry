@@ -18,7 +18,10 @@ jobs:
       run: sudo ./configure
 
     - name: Set directory permissions
-      run: sudo chown -R $(whoami) /usr/local
+      run: |
+        sudo chown -R $(whoami) /usr/local
+        mkdir /usr/local/lib
+        mkdir /usr/local/include
 
     - name: make sharedlib
       run: make sharedlib
