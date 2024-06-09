@@ -32,8 +32,13 @@ jobs:
     - name: make tests
       run: make tests
 
+    - name: Debug binary
+      run: ldd ./bin/testsuite
+
     - name: run tests
-      run: ./bin/testsuite
+      run: |
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+        ./bin/testsuite
 
     - name: Archive shared library
       uses: actions/upload-artifact@v1
