@@ -9,7 +9,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Compiler version
-      run: gcc -Xlinker -v
+      run: gcc -v
 
     - name: Install autotools
       run: brew install autoconf automake libtool binutils
