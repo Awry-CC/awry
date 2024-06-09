@@ -8,6 +8,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Compiler version
+      run: gcc --version
+
     - name: Install autotools
       run: brew install autoconf automake libtool binutils
 
