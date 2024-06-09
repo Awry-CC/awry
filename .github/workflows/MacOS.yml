@@ -4,7 +4,7 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
     - uses: actions/checkout@v2
 
@@ -19,13 +19,6 @@ jobs:
 
     - name: configure
       run: sudo ./configure
-
-    - name: Set directory permissions
-      run: |
-        export PATH=$PATH:/usr/local/lib:/usr/local/include
-        sudo chown -R $(whoami) /usr/local
-        mkdir /usr/local/lib
-        mkdir /usr/local/include
 
     - name: make sharedlib
       run: make sharedlib
