@@ -19,6 +19,7 @@ jobs:
 
     - name: Set directory permissions
       run: |
+        export PATH=$PATH:/usr/local/lib:/usr/local/include
         sudo chown -R $(whoami) /usr/local
         mkdir /usr/local/lib
         mkdir /usr/local/include
