@@ -1,0 +1,85 @@
+UNAME       := $(shell uname)
+
+CC          := @CC@
+LIBNAME			:= libawry
+LIBVNAME    := libawry
+LIBEXT      := so
+CFILES      := src/awry.c src/output.c
+HFILES			:= inc/macros.h inc/awry.h inc/common.h
+OBJECTS     := awry.o output.o
+CFLAGS			:= @CFLAGS@
+ADDFLAGS    := -g -O2 -std=c11
+ADDSFLAGS   :=
+
+LIBMAJOR    := 1
+LIBMINOR    := 0
+LIBMAINT    := 0
+SHAREDFLAG  := -shared
+
+OBJDIR      := obj
+TESTFILES   := $(wildcard test/*.c)
+TESTOBJS    := $(TESTFILES:test/%.c=$(OBJDIR)/%.o)
+
+TESTWRAPDMP   := 0
+
+ifeq ($(OS), Windows_NT)
+  LIBEXT    := dll
+  SYSLIBDIR := /c/Windows/system32
+  SYSINCDIR := /usr/include
+  ADDFLAGS  := $(ADDFLAGS) -L/c/Windows/system32
+  LIBVNAME  := $(LIBNAME).$(LIBEXT).$(LIBMAJOR).$(LIBMINOR).$(LIBMAINT)
+else
+  ifeq ($(UNAME), Linux)
+    SYSLIBDIR := /usr/local/lib
+    SYSINCDIR := /usr/local/include
+    ADDFLAGS  := $(ADDFLAGS) -fPIC
+    ADDSFLAGS := $(ADDFLAGS) -D LD_WRAP
+    LIBVNAME  := $(LIBNAME).$(LIBEXT).$(LIBMAJOR).$(LIBMINOR).$(LIBMAINT)
+  endif
+  
+  ifeq ($(UNAME), Darwin)
+    SYSLIBDIR := /usr/local/lib
+    SYSINCDIR := /usr/local/include
+    ADDSFLAGS := $(ADDFLAGS) -D LD_WRAP
+    TESTWRAPDMP  := 1
+    SHAREDFLAG   := -dynamiclib -install_name $(LIBNAME).dylib -compatibility_version $(LIBMAJOR).$(LIBMINOR) -current_version $(LIBMAJOR).$(LIBMINOR).$(LIBMAINT)
+    LIBVNAME  := $(LIBNAME).$(LIBMAJOR).$(LIBMINOR).$(LIBMAINT).dylib
+    LIBEXT    := dylib
+  endif
+endif
+
+all: sharedlib install links tests
+
+sharedlib:
+	$(CC) $(CFLAGS) $(ADDFLAGS) -c $(CFILES)
+	$(CC) $(SHAREDFLAG) $(OBJECTS) -o lib/$(LIBVNAME)
+
+install:
+	cp lib/$(LIBVNAME) $(SYSLIBDIR)
+	mkdir $(SYSINCDIR)/awry
+	cp $(HFILES) $(SYSINCDIR)/awry
+
+uninstall:
+	rm $(SYSLIBDIR)/$(LIBVNAME)
+	rm $(SYSLIBDIR)/$(LIBNAME).$(LIBEXT)
+	rm -rf $(SYSINCDIR)/awry
+
+tests: $(TESTOBJS)
+	$(CC) $(CFLAGS) $(ADDFLAGS) $(ADDSFLAGS) -o bin/testsuite $(TESTOBJS) -lawry
+
+links:
+	ln -s $(SYSLIBDIR)/$(LIBVNAME) $(SYSLIBDIR)/$(LIBNAME).$(LIBEXT)
+
+$(TESTOBJS): $(OBJDIR)/%.o : test/%.c
+	$(CC) $(CFLAGS) $(ADDFLAGS) $(ADDSFLAGS) -c $< -o $@
+
+clean:
+	rm -f *.o
+	rm -f obj/*.o
+	rm -f lib/$(LIBVNAME)
+	rm -f config.log
+	rm -f config.status
+	rm -f configure
+	rm -f Makefile
+	rm -rf autom4te.cache
+	rm -f bin/testsuite

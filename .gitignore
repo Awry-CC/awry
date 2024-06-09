@@ -1,0 +1,13 @@
+*.o
+debug
+build.sh
+.DS_Store
+autom4te.cache
+config.log
+config.status
+configure
+Makefile
+bin/testsuite
+lib/libawry.so
+lib/libawry.1.0.0.so
+lib/libawry.1.0.0.dylib

@@ -1,0 +1,45 @@
+name: MacOS
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install autotools
+      run: brew install autoconf automake libtool binutils
+
+    - name: autoconf
+      run: autoconf
+
+    - name: configure
+      run: sudo ./configure
+
+    - name: make sharedlib
+      run: make sharedlib
+
+    - name: make install
+      run: make install
+
+    - name: make links
+      run: make links
+
+    - name: make tests
+      run: make tests
+
+    - name: run tests
+      run: ./bin/testsuite
+
+    - name: Archive shared library
+      uses: actions/upload-artifact@v1
+      with:
+        name: library
+        path: lib/
+
+    - name: Archive headers
+      uses: actions/upload-artifact@v1
+      with:
+        name: headers
+        path: inc/
