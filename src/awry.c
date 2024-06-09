@@ -227,7 +227,7 @@ static void run_suite(AwryTestSuite *suite, AwryModule *awry) {
   awry_format_suite_prologue(suite->name);
   awry_format_suite_value(suite->name);
 
-  suite->suite(awry);
+  suite->suite();
 
   run_blocks(awry, &(suite->blocks));
 
