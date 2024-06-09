@@ -33,7 +33,7 @@ jobs:
       run: make tests
 
     - name: Debug binary
-      run: ldd ./bin/testsuite
+      run: otool -L ./bin/testsuite
 
     - name: run tests
       run: |
