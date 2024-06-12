@@ -24,7 +24,7 @@
 #define AWRY_WHEN_TYPE 0x06
 
 #define AWRY_JMP_HANDLE_0x01
-#define AWRY_JMP_HANDLE_0x02 if (!setjmp(minitest.signal_buffer))
+#define AWRY_JMP_HANDLE_0x02 if (!setjmp(Awry.signal_buffer))
 #define AWRY_JMP_HANDLE_0x03
 #define AWRY_JMP_HANDLE_0x04
 #define AWRY_JMP_HANDLE_0x05
@@ -59,11 +59,11 @@
 // DESCRIBE blocks
 //
 #define AWRY_REGISTER_SUITE( suite, handle, TestName, ... ) \
-  static void handle(AwryModule* awry); \
+  static void handle(AwryModule* __awry); \
   static void __attribute__((constructor)) AWRY_CONSTRUCTOR_NAME(handle)(void) {\
     Awry.register_suite(&Awry, suite, handle); \
   } \
-  static void handle(AwryModule* awry) { void* current_expect = NULL; AWRY_JMP_HANDLE(0x01) {
+  static void handle(AwryModule* __awry) { void* current_expect = NULL; AWRY_JMP_HANDLE(0x01) {
 
 #define AWRY_DEFINE_SUITE( suite, handle, ... ) \
   AWRY_REGISTER_SUITE( suite, handle, AWRY_UNIQUE_NAME( AWRY_ ), __VA_ARGS__ )

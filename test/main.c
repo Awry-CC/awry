@@ -9,5 +9,5 @@ int main() {
 
   Awry.clear(&Awry);
 
-  return 0;
+  return result;
 }

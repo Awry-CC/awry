@@ -1,24 +1,14 @@
 #ifndef MODULE_AWRY_H
 #define MODULE_AWRY_H 1
 
-#include "common.h"
-#include "macros.h"
-#include "assertions.h"
-
 typedef struct AwryBlockStruct AwryTestBlock;
 typedef struct AwryStruct AwryModule;
 
 extern AwryModule Awry;
 
-typedef enum { 
-  AWRY_EXPECT_EQUAL_FLAG,
-  AWRY_EXPECT_GT_FLAG,
-  AWRY_EXPECT_LT_FLAG,
-  AWRY_EXPECT_GTE_FLAG,
-  AWRY_EXPECT_LTE_FLAG,
-  AWRY_EXPECT_RANGE_FLAG,
-  AWRY_EXPECT_SIGNAL_FLAG
-} Awry_expect_flags;
+#include "common.h"
+#include "macros.h"
+#include "assertions.h"
 
 typedef struct AwryBlockArrayStruct {
   AwryTestBlock **array;
@@ -53,7 +43,7 @@ typedef struct AwrySuiteStruct {
 
   AwryBlock *current_assertion;
 
-  void (*suite)();
+  void (*suite)(struct AwryStruct*);
 
   struct AwrySuiteStruct *next;
   struct AwrySuiteStruct *previous;
@@ -102,9 +92,6 @@ char* awry_format_it_epilogue(int block_depth, char* color, char* bullet, char* 
 
 char* awry_format_assert_failure_value(int block_depth, char* color, char* assert_message);
 
-char* awry_format_summary(AwryModule *mt);
-
-char* awry_assert_template(int neg, char* format, Awry_expect_flags flag);
-char* awry_expect_flag_to_string(Awry_expect_flags flag);
+char* awry_format_summary(AwryModule *awry);
 
 #endif

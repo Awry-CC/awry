@@ -4,9 +4,9 @@ CC          := @CC@
 LIBNAME			:= libawry
 LIBVNAME    := libawry
 LIBEXT      := so
-CFILES      := src/awry.c src/output.c
-HFILES			:= inc/macros.h inc/awry.h inc/common.h
-OBJECTS     := awry.o output.o
+CFILES      := src/awry.c src/output.c src/assertions.c
+HFILES			:= inc/macros.h inc/awry.h inc/common.h inc/assertions.h
+OBJECTS     := awry.o output.o assertions.o
 CFLAGS			:= @CFLAGS@
 ADDFLAGS    := -g -O2 -std=c11
 ADDSFLAGS   :=

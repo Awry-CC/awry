@@ -47,7 +47,6 @@ static void insert_block_array(AwryBlockArray *a, AwryBlock *block) {
 
 static void register_suite(AwryModule *awry, const char *name, void *test_case) {
   //mt_log_debug("Initializing suite \n\t\t<name: \"%s\">", name);
-
   AwryTestSuite *suite = malloc(sizeof(AwryTestSuite));
   suite->name = malloc(strlen(name) + 1);
   strcpy(suite->name, name);
@@ -227,7 +226,7 @@ static void run_suite(AwryTestSuite *suite, AwryModule *awry) {
   awry_format_suite_prologue(suite->name);
   awry_format_suite_value(suite->name);
 
-  suite->suite();
+  suite->suite(awry);
 
   run_blocks(awry, &(suite->blocks));
 
