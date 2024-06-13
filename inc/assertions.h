@@ -25,6 +25,7 @@ char* awry_expect_flag_to_string(Awry_expect_flags flag);
 #define AWRY_expect_epilogue if(current_expect != NULL) { current_expect = NULL; }
 
 #define be
+#define have
 #define to    0
 #define not   +1
 #define equal(expected)      ,expected, sizeof(expected), expected, sizeof(expected), AWRY_EXPECT_EQUAL_FLAG); AWRY_expect_epilogue;
@@ -33,6 +34,7 @@ char* awry_expect_flag_to_string(Awry_expect_flags flag);
 #define be_false ,0, 0,0,0, AWRY_EXPECT_EQUAL_FLAG); AWRY_expect_epilogue;
 #define be_true  ,1, 0,0,0, AWRY_EXPECT_EQUAL_FLAG); AWRY_expect_epilogue;
 #define been_called ,0,0,0,0, AWRY_EXPECT_BEEN_CALLED_FLAG); AWRY_expect_epilogue;
+#define been_captured ,Awry.captured_signal,0,0,0, AWRY_EXPECT_EQUAL_FLAG); AWRY_expect_epilogue;
 
 #define greater_than(expected) ,expected,0,expected,0,AWRY_EXPECT_GT_FLAG); AWRY_expect_epilogue;
 #define less_than(expected) ,expected,0,expected,0,AWRY_EXPECT_LT_FLAG); AWRY_expect_epilogue;

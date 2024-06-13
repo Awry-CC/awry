@@ -111,4 +111,8 @@
 
 #define subject(t) Awry.current->subject
 
+#define capture(s)                  \
+  Awry.expected_signal = s;         \
+  if (!setjmp(Awry.capture_buffer)) \
+
 #endif

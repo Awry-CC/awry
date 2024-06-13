@@ -60,6 +60,10 @@ typedef struct AwryStruct {
   int log_level;
 
   jmp_buf signal_buffer;
+  jmp_buf capture_buffer;
+
+  int expected_signal;
+  int captured_signal;
 
   AwryTestSuite *suites;
   AwryTestSuite *current;

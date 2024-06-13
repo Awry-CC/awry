@@ -158,6 +158,10 @@ static void step_back(AwryModule *awry) {
     if (awry->current->it_flag) {
       awry->current->it_flag = 0;
       run_after_fixtures(awry, awry->current->current_block);
+
+      awry->expected_signal = 0;
+      awry->captured_signal = 0;
+
       return;
     }
 
@@ -310,23 +314,28 @@ static void capture_signal(int signal) {
     minitest.current->current_assertion->name
   );
 */
-  Awry.failures += 1;
-  Awry.current->current_assertion->assert_result = AWRY_TEST_FAILURE;
-
-  char *template = awry_assert_template(1, AWRY_TEMPLATE_VALUE, AWRY_EXPECT_SIGNAL_FLAG);
-  Awry.current->current_assertion->assert_message = malloc(AWRY_MAX_ASSERTION_BUFFER);
-
-  char sig_str[3];
-  sprintf(sig_str, "%d", signal);
-
-  snprintf(                                                                         
-    Awry.current->current_assertion->assert_message, AWRY_MAX_ASSERTION_BUFFER,
-    template, "Signal", sig_str, ""
-  );
-
-  free(template);
-
-  longjmp(Awry.signal_buffer, 1);
+  if (Awry.expected_signal != 0 && signal == Awry.expected_signal) {
+    Awry.captured_signal = signal;
+    longjmp(Awry.capture_buffer, 1);
+  } else {
+    Awry.failures += 1;
+    Awry.current->current_assertion->assert_result = AWRY_TEST_FAILURE;
+  
+    char *template = awry_assert_template(1, AWRY_TEMPLATE_VALUE, AWRY_EXPECT_SIGNAL_FLAG);
+    Awry.current->current_assertion->assert_message = malloc(AWRY_MAX_ASSERTION_BUFFER);
+  
+    char sig_str[3];
+    sprintf(sig_str, "%d", signal);
+  
+    snprintf(                                                                         
+      Awry.current->current_assertion->assert_message, AWRY_MAX_ASSERTION_BUFFER,
+      template, "Signal", sig_str, ""
+    );
+  
+    free(template);
+  
+    longjmp(Awry.signal_buffer, 1);
+  }
 }
 
 static void init_signals(AwryModule *awry) {
@@ -356,6 +365,8 @@ AwryModule Awry = {
   .test_cases = 0,
   .passes = 0,
   .failures = 0,
+  .expected_signal = 0,
+  .captured_signal = 0,
   .log_level = AWRY_LOG_ERROR,
   .output_format = AWRY_STDIO,
   .suites = NULL,
