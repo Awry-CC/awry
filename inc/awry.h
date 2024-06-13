@@ -3,12 +3,23 @@
 
 typedef struct AwryBlockStruct AwryTestBlock;
 typedef struct AwryStruct AwryModule;
+typedef struct AwryLoggerStruct AwryLoggerModule;
 
 extern AwryModule Awry;
+extern AwryLoggerModule AwryLogger;
 
 #include "common.h"
 #include "macros.h"
 #include "assertions.h"
+
+typedef struct AwryLoggerStruct {
+  void (*log_dev)(const char*,...);
+  void (*log_fatal)(const char*,...);
+  void (*log_error)(const char*,...);
+  void (*log_warn)(const char*,...);
+  void (*log_info)(const char*,...);
+  void (*log_debug)(const char*,...);
+} AwryLoggerModule;
 
 typedef struct AwryBlockArrayStruct {
   AwryTestBlock **array;

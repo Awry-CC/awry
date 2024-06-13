@@ -39,14 +39,14 @@ static void insert_block_array(AwryBlockArray *a, AwryBlock *block) {
   if (a->used == a->size) {
     a->size = (a->size * 3) / 2 + 8;
     a->array = (realloc(a->array, a->size * sizeof(AwryBlock*)));
-    //mt_log_debug("Block array resized \n\t\t<size: %d>", a->size);
+    AwryLogger.log_debug("Block array resized \n\t\t<size: %d>", a->size);
   }
   a->array[a->used++] = block;
-  //mt_log_info("Block inserted into array buffer (%d/%d)", a->used, a->size);
+  AwryLogger.log_info("Block inserted into array buffer (%d/%d)", a->used, a->size);
 }
 
 static void register_suite(AwryModule *awry, const char *name, void *test_case) {
-  //mt_log_debug("Initializing suite \n\t\t<name: \"%s\">", name);
+  AwryLogger.log_debug("Initializing suite \n\t\t<name: \"%s\">", name);
   AwryTestSuite *suite = malloc(sizeof(AwryTestSuite));
   suite->name = malloc(strlen(name) + 1);
   strcpy(suite->name, name);
@@ -88,7 +88,7 @@ static void run_before_fixtures(AwryModule *awry, AwryBlock* current_block) {
     if (block->before != NULL) {
       before_fixtures[index] = block->before;
       index++;
-      //mt_log_debug("Running before fixture \n\t\t<address: %p> \n\t\t<block: \"%s\">", block->before, block->name == NULL ? "Root" :  block->name);
+      AwryLogger.log_debug("Running before fixture \n\t\t<address: %p> \n\t\t<block: \"%s\">", block->before, block->name == NULL ? "Root" :  block->name);
     }
     block = block->previous;
   } while(block != NULL);
@@ -103,7 +103,7 @@ static void run_after_fixtures(AwryModule *awry, AwryBlock* current_block) {
   do {
     if (block->after != NULL) {
       (block->after)(&(awry->current->subject));
-      //mt_log_debug("Running after fixture \n\t\t<address: %p> \n\t\t<block: \"%s\">", block->after, block->name == NULL ? "Root" :  block->name);
+      AwryLogger.log_debug("Running after fixture \n\t\t<address: %p> \n\t\t<block: \"%s\">", block->after, block->name == NULL ? "Root" :  block->name);
     }
     block = block->previous;
   } while(block != NULL);
@@ -111,7 +111,7 @@ static void run_after_fixtures(AwryModule *awry, AwryBlock* current_block) {
 
 static void register_block(int test_type, AwryModule *awry, const char *name) {
   if (!awry->current) {
-    //mt_log_fatal("Block \"%s\" was created outside a describe context. All blocks must have a parent describe block.", name);
+    AwryLogger.log_fatal("Block \"%s\" was created outside a describe context. All blocks must have a parent describe block.", name);
     return;
   }
 
@@ -125,7 +125,7 @@ static void register_block(int test_type, AwryModule *awry, const char *name) {
   block->before = NULL;
   block->after = NULL;
 
-  //mt_log_debug("Initializing block \n\t\t<address: %p> \n\t\t<name: \"%s\">", block, block->name);
+  AwryLogger.log_debug("Initializing block \n\t\t<address: %p> \n\t\t<name: \"%s\">", block, block->name);
 
   if (test_type == AWRY_IT_TYPE) {
     awry->test_cases += 1;
@@ -179,13 +179,13 @@ static void run_it_blocks(AwryModule *awry, int depth, AwryBlockArray *blocks) {
 
     char *color = block->assert_result == AWRY_TEST_PENDING ? AWRY_CONSOLE_CYAN : block->assert_result == AWRY_TEST_PASS ? AWRY_CONSOLE_GREEN : AWRY_CONSOLE_RED;
     char *bullet = block->assert_result == AWRY_TEST_PENDING ? AWRY_PENDING_BULLET : block->assert_result == AWRY_TEST_PASS ? AWRY_SUCCESS_BULLET : AWRY_FAILURE_BULLET;
-/*
-    mt_log_info(
+
+    AwryLogger.log_info(
       "Running Assertion \n\t\t<name: \"%s\"> \n\t\t<result: %s>",
       block->name,
-      (block->assert_result == TEST_PENDING ? "Pending" : block->assert_result == TEST_PASS ? "Passed" : "Failed")
+      (block->assert_result == AWRY_TEST_PENDING ? "Pending" : block->assert_result == AWRY_TEST_PASS ? "Passed" : "Failed")
     );
-*/
+
     awry_format_it_prologue(depth, color, bullet, block->name);
     awry_format_it_value(depth, color, bullet, block->name);
 
@@ -200,15 +200,15 @@ static void run_it_blocks(AwryModule *awry, int depth, AwryBlockArray *blocks) {
 static void run_blocks(AwryModule *awry, AwryBlockArray *blocks) {
   if (!blocks->size) { return; }
 
-  //mt_log_info("Running blocks <count: %d>", blocks->used);
+  AwryLogger.log_info("Running blocks <count: %d>", blocks->used);
 
   for (int i = 0; i < blocks->used; i++) {
     AwryBlock *block = blocks->array[i];
 
-    //mt_format_block_prologue(block->depth, block->block_type, block->name);
+    awry_format_block_prologue(block->depth, block->block_type, block->name);
 
     if(block->block_type != AWRY_ROOT_TYPE) {
-      //mt_log_info("Running block \n\t\t<name: \"%s\"> \n\t\t<type: %d> \n\t\t<depth: %d>", block->name, block->block_type, block->depth);
+      AwryLogger.log_info("Running block \n\t\t<name: \"%s\"> \n\t\t<type: %d> \n\t\t<depth: %d>", block->name, block->block_type, block->depth);
       awry_format_block_value(block->depth, block->block_type, block->name);
     }
 
@@ -225,7 +225,7 @@ static void run_suite(AwryTestSuite *suite, AwryModule *awry) {
 
   if (!suite) { return; }
 
-  //mt_log_info("Running suite \n\t\t<name: \"%s\">", suite->name);
+  AwryLogger.log_info("Running suite \n\t\t<name: \"%s\">", suite->name);
 
   awry_format_suite_prologue(suite->name);
   awry_format_suite_value(suite->name);
@@ -305,15 +305,14 @@ static void clear(AwryModule *awry) {
 }
 
 static void capture_signal(int signal) {
-/*
-  mt_log_info(
+  AwryLogger.log_info(
     "Signal \"%d\" was captured: \n\t Suite: %s \n\t Context: %s \n\t Test Case: %s",
     signal,
-    minitest.current->name,
-    minitest.current->current_block->name,
-    minitest.current->current_assertion->name
+    Awry.current->name,
+    Awry.current->current_block->name,
+    Awry.current->current_assertion->name
   );
-*/
+
   if (Awry.expected_signal != 0 && signal == Awry.expected_signal) {
     Awry.captured_signal = signal;
     longjmp(Awry.capture_buffer, 1);
