@@ -313,6 +313,8 @@ static void capture_signal(int signal) {
     Awry.current->current_assertion->name
   );
 
+  // BUG: expected_signal seg faults on Ubuntu and Windows
+  //      debug signal != Awry.expected_signal longjmp based on expect signal
   if (Awry.expected_signal != 0 && signal == Awry.expected_signal) {
     Awry.captured_signal = signal;
     longjmp(Awry.capture_buffer, 1);
