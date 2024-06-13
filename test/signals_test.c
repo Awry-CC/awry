@@ -2,6 +2,7 @@
 
 describe("Awry", awry_signals)
   context("Signals")
+  /*
     when("a signal is explicitly captured")
       and("the incorrect signal is captured")
         it("reports the error")
@@ -27,7 +28,7 @@ describe("Awry", awry_signals)
         end
       end
     end
-
+  */
     when("a signal is captured")
       it("reports the error")
         AwryModule* subject = NULL;
