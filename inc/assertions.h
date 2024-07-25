@@ -3,24 +3,12 @@
 
 #include "awry.h"
 
-typedef enum { 
-  AWRY_EXPECT_EQUAL_FLAG,
-  AWRY_EXPECT_GT_FLAG,
-  AWRY_EXPECT_LT_FLAG,
-  AWRY_EXPECT_GTE_FLAG,
-  AWRY_EXPECT_LTE_FLAG,
-  AWRY_EXPECT_RANGE_FLAG,
-  AWRY_EXPECT_SIGNAL_FLAG
-} Awry_expect_flags;
+#ifndef AWRY_EXTENSIONS
+#define AWRY_EXTENSIONS
+#endif
 
 char* awry_assert_template(int neg, char* format, Awry_expect_flags flag);
 char* awry_expect_flag_to_string(Awry_expect_flags flag);
-
-#define AWRY_expect_forward(suffix, type) \
-  void __expect_##suffix(AwryModule *awry, type actual, size_t as, int negated, type expected, size_t es, type max_range, size_t ms, Awry_expect_flags flag);
-
-#define AWRY_expect_array_forward(suffix, type) \
-  void __expect_##suffix(AwryModule *awry, type actual[], size_t as, int negated, type expected[], size_t es, type max_range[], size_t ms, Awry_expect_flags flag);
 
 #define AWRY_expect_epilogue if(current_expect != NULL) { current_expect = NULL; }
 
@@ -118,6 +106,11 @@ char* awry_expect_flag_to_string(Awry_expect_flags flag);
 #define AWRY_expect(suffix, type, comparator, format) AWRY_expect_definition(suffix, type,, comparator, format, SINGLE)
 #define AWRY_expect_array(suffix, type, comparator, format) AWRY_expect_definition(suffix, type, [], comparator, format, ARRAY)
 
+#define AWRY_expect_extension(suffix, type, comparator, format) AWRY_expect_definition(suffix, type,, comparator, format, EXTENSION)
+#define AWRY_expect_array_extension(suffix, type, comparator, format) AWRY_expect_definition(suffix, type, [], comparator, format, EXTENSION)
+#define AWRY_expect_extension_default(suffix, type, comparator, format) AWRY_expect_definition(suffix, type,, comparator, format, NONE)
+#define AWRY_expect_array_extension_default(suffix, type, comparator, format) AWRY_expect_definition(suffix, type, [], comparator, format, NONE)
+
 AWRY_expect_forward(int,    int);
 AWRY_expect_forward(char,   char);
 AWRY_expect_forward(short,  short);
@@ -140,6 +133,7 @@ AWRY_expect_array_forward(doublearr, double);
 AWRY_expect_array_forward(floatarr, float);
 
 #define expect_generic(actual) _Generic(actual,                  \
+                                        AWRY_EXTENSIONS          \
                                         int: __expect_int,       \
                                         char: __expect_char,     \
                                         short: __expect_short,   \

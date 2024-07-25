@@ -5,7 +5,7 @@ LIBNAME			:= libawry
 LIBVNAME    := libawry
 LIBEXT      := so
 CFILES      := src/awry.c src/output.c src/assertions.c src/log.c
-HFILES			:= inc/macros.h inc/awry.h inc/common.h inc/assertions.h
+HFILES			:= inc/macros.h inc/awry.h inc/common.h inc/assertions.h inc/extensions.h
 OBJECTS     := awry.o output.o assertions.o log.o
 CFLAGS			:= @CFLAGS@
 ADDFLAGS    := -g -O2 -std=c11

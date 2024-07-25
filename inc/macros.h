@@ -33,6 +33,8 @@
 
 #define AWRY_ATTR_SUPPORTED 1
 
+#define AWRY_SPLAT_ARGS(...) __VA_ARGS__
+
 //
 // __attribute__ support
 //
