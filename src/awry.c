@@ -120,6 +120,7 @@ static void register_block(int test_type, AwryModule *awry, const char *name) {
   strcpy(block->name, name);
   block->it_blocks.size = 0;
   block->it_blocks.used = 0;
+  block->children.size = 0;
   block->children.used = 0;
   block->assert_message = NULL;
   block->before = NULL;
