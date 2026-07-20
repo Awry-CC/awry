@@ -60,10 +60,9 @@ static void register_suite(AwryModule *awry, const char *name, void *test_case) 
 
   init_block_array(&(suite->blocks), 1);
 
-  AwryBlock *root_block = malloc(sizeof(AwryBlock));
+  AwryBlock *root_block = calloc(1, sizeof(AwryBlock));
   root_block->block_type = AWRY_ROOT_TYPE;
-  root_block->before = NULL;
-  root_block->after = NULL;
+  root_block->depth = 0;
 
   insert_block_array(&(suite->blocks), root_block);
 
@@ -115,16 +114,17 @@ static void register_block(int test_type, AwryModule *awry, const char *name) {
     return;
   }
 
-  AwryBlock *block = malloc(sizeof(AwryBlock));
+  AwryBlock *block = calloc(1, sizeof(AwryBlock));
   block->name = malloc(strlen(name) + 1);
   strcpy(block->name, name);
-  block->it_blocks.size = 0;
-  block->it_blocks.used = 0;
-  block->children.size = 0;
-  block->children.used = 0;
-  block->assert_message = NULL;
-  block->before = NULL;
-  block->after = NULL;
+
+  /*
+    Should a memory layout create an infinite loop, the previous block may be required to be set here
+    and removed on lines 142 and 143
+
+    block->previous = awry->current->current_block;
+    block->depth = awry->current->current_block->depth + 1;
+  */
 
   AwryLogger.log_debug("Initializing block \n\t\t<address: %p> \n\t\t<name: \"%s\">", block, block->name);
 
